@@ -15,8 +15,9 @@ export default function QuickMenuModal() {
 
     const menuItems = [
         { id: 'ai', title: 'Fina AI \nAnaliz', icon: 'sparkles', color: colors.accent.purple, route: '/modals/ai-chat', iconLibrary: 'Ionicons' },
-        { id: 'goals', title: 'Hedef\nYönetimi', icon: 'flag', color: colors.accent.teal, route: '/(tabs)/goals', iconLibrary: 'Ionicons' },
-        { id: 'cards', title: 'Findeks\nYönetimi', icon: 'card', color: colors.primary.brand, route: '/cards', iconLibrary: 'Ionicons' }
+        { id: 'goals', title: 'Hedef\nYönetimi', icon: 'flag', color: colors.accent.teal, route: '/goals', iconLibrary: 'Ionicons' },
+        { id: 'cards', title: 'Findeks\nYönetimi', icon: 'card', color: colors.primary.brand, route: '/cards', iconLibrary: 'Ionicons' },
+        { id: 'reminders', title: 'Hatırlatmalar', icon: 'notifications', color: colors.accent.amber, route: '/reminders', iconLibrary: 'Ionicons' }
     ];
 
     return (
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
     },
     gridContainer: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: 24,
         justifyContent: 'center',
     },

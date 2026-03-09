@@ -40,7 +40,15 @@ export const BalanceHero: React.FC<BalanceHeroProps> = ({
                     </View>
 
                     <View style={styles.chartContainer}>
-                        <BalanceDonut income={income} expense={expense} size={100} />
+                        <BalanceDonut income={income} expense={expense} size={100}>
+                            <Text style={{
+                                color: balance < 0 ? colors.accent.red : colors.accent.teal,
+                                fontFamily: FONTS.family.bold,
+                                fontSize: 13
+                            }}>
+                                {balance < 0 ? 'Ekside' : 'Artıda'}
+                            </Text>
+                        </BalanceDonut>
                     </View>
                 </View>
 

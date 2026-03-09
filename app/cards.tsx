@@ -15,7 +15,7 @@ export default function CardsScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
 
-    const { cards, getTotalDebt, getTotalLimit, getTotalUtilization } = useCreditCardStore();
+    const { cards, getTotalDebt, getTotalLimit, getTotalUtilization, activePlan } = useCreditCardStore();
 
     const totalDebt = getTotalDebt();
     const totalLimit = getTotalLimit();
@@ -66,15 +66,35 @@ export default function CardsScreen() {
                 {/* AI Simulator Preview */}
                 <GlassCard variant="subtle" style={styles.aiCard} contentStyle={{ padding: 16 }}>
                     <View style={styles.aiHeader}>
-                        <Ionicons name="sparkles" size={20} color={colors.accent.purple} />
-                        <Text style={[styles.aiTitle, { color: colors.glass.text.primary }]}>Findeks Simülatörü</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                            <Ionicons name="sparkles" size={20} color={colors.accent.purple} />
+                            <Text style={[styles.aiTitle, { color: colors.glass.text.primary }]}>Findeks Simülatörü</Text>
+                        </View>
+                        {activePlan && (
+                            <View style={[styles.planBadge, { backgroundColor: activePlan.status === 'completed' ? `${colors.accent.teal}20` : `${colors.accent.amber}20` }]}>
+                                <Text style={[styles.planBadgeText, { color: activePlan.status === 'completed' ? colors.accent.teal : colors.accent.amber }]}>
+                                    {activePlan.status === 'completed' ? 'Tamamlandı' : 'Devam Ediyor'}
+                                </Text>
+                            </View>
+                        )}
                     </View>
                     <Text style={[styles.aiDescription, { color: colors.glass.text.secondary }]}>
-                        Akıllı ödeme planını oluşturarak kredi notunu en hızlı nasıl yükseltebileceğini öğren.
+                        {activePlan
+                            ? "Mevcut ödeme planını takip ederek kredi notunu yükseltmeye devam et."
+                            : "Akıllı ödeme planını oluşturarak kredi notunu en hızlı nasıl yükseltebileceğini öğren."}
                     </Text>
-                    <Pressable style={styles.aiBtn} onPress={() => router.push('/modals/payment-plan' as any)}>
-                        <Text style={[styles.aiBtnText, { color: colors.accent.purple }]}>Planı Oluştur →</Text>
-                    </Pressable>
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                        <Pressable style={styles.aiBtn} onPress={() => router.push('/modals/payment-plan' as any)}>
+                            <Text style={[styles.aiBtnText, { color: colors.accent.purple }]}>
+                                {activePlan ? "Yeni Plan Oluştur" : "Planı Oluştur →"}
+                            </Text>
+                        </Pressable>
+                        {activePlan && (
+                            <Pressable style={styles.aiBtn} onPress={() => router.push('/modals/inspect-plan' as any)}>
+                                <Text style={[styles.aiBtnText, { color: colors.accent.teal }]}>Planı İncele →</Text>
+                            </Pressable>
+                        )}
+                    </View>
                 </GlassCard>
 
                 <View style={styles.sectionHeader}>
@@ -235,6 +255,16 @@ const styles = StyleSheet.create({
     aiBtnText: {
         fontFamily: FONTS.family.bold,
         fontSize: 14,
+    },
+    planBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
+    planBadgeText: {
+        fontFamily: FONTS.family.bold,
+        fontSize: 10,
+        textTransform: 'uppercase',
     },
     sectionHeader: {
         marginBottom: 16,

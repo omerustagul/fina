@@ -1,5 +1,5 @@
 // stores/financeStore.ts
-import { Budget, Category, Goal, Transaction } from '@/types';
+import { Budget, Category, Goal, Reminder, Transaction } from '@/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -11,6 +11,7 @@ interface FinanceState {
     goals: Goal[];
     selectedPeriod: 'week' | 'month' | 'year';
     selectedCurrency: string;
+    reminders: Reminder[];
 
     // Actions
     addTransaction: (tx: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -27,6 +28,12 @@ interface FinanceState {
     // Categories Actions
     addCategory: (category: Omit<Category, 'id' | 'isDefault'>) => void;
 
+    // Reminders Actions
+    addReminder: (reminder: Omit<Reminder, 'id' | 'createdAt' | 'isCompleted'>) => void;
+    updateReminder: (id: string, updates: Partial<Reminder>) => void;
+    deleteReminder: (id: string) => void;
+    toggleReminderStatus: (id: string) => void;
+
     // Helpers
     getTotalIncome: () => number;
     getTotalExpense: () => number;
@@ -41,6 +48,7 @@ export const useFinanceStore = create<FinanceState>()(
             categories: DEFAULT_CATEGORIES,
             budgets: [],
             goals: DEFAULT_GOALS,
+            reminders: [],
             selectedPeriod: 'month',
             selectedCurrency: 'TRY',
 
@@ -180,6 +188,38 @@ export const useFinanceStore = create<FinanceState>()(
                     isDefault: false
                 };
                 set((state) => ({ categories: [...(state.categories || []), newCategory] }));
+            },
+
+            addReminder: (reminder) => {
+                const newReminder: Reminder = {
+                    ...reminder,
+                    id: Math.random().toString(36).substring(7),
+                    isCompleted: false,
+                    createdAt: Date.now(),
+                };
+                set((state) => ({ reminders: [newReminder, ...(state.reminders || [])] }));
+            },
+
+            updateReminder: (id, updates) => {
+                set((state) => ({
+                    reminders: (state.reminders || []).map((r) =>
+                        r.id === id ? { ...r, ...updates } : r
+                    ),
+                }));
+            },
+
+            deleteReminder: (id) => {
+                set((state) => ({
+                    reminders: (state.reminders || []).filter((r) => r.id !== id),
+                }));
+            },
+
+            toggleReminderStatus: (id) => {
+                set((state) => ({
+                    reminders: (state.reminders || []).map((r) =>
+                        r.id === id ? { ...r, isCompleted: !r.isCompleted } : r
+                    ),
+                }));
             },
         }),
         {

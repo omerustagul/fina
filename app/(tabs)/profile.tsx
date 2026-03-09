@@ -161,8 +161,9 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     profileCard: {
-        padding: 20,
+        padding: 6,
         marginBottom: 32,
+        borderRadius: 24,
     },
     avatarSection: {
         flexDirection: 'row',
@@ -206,9 +207,9 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     editBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
+        width: 40,
+        height: 40,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -29,6 +29,14 @@ interface CreditCardState {
     updateCard: (id: string, updates: Partial<CreditCard>) => void;
     deleteCard: (id: string) => void;
 
+    // Plan Actions
+    setActivePlan: (plan: PaymentPlanItem[]) => void;
+    togglePaymentStatus: (cardId: string) => void;
+    clearPlan: () => void;
+
+    // Active Plan
+    activePlan: PaymentPlan | null;
+
     // Hesaplama getters (for future use or immediate UI)
     getTotalDebt: () => number;
     getTotalLimit: () => number;
@@ -36,10 +44,25 @@ interface CreditCardState {
     getTotalMinimumPayment: () => number;
 }
 
+export interface PaymentPlanItem {
+    cardId: string;
+    amount: number;
+    reason: string;
+    isPaid: boolean;
+}
+
+export interface PaymentPlan {
+    id: string;
+    items: PaymentPlanItem[];
+    createdAt: number;
+    status: 'active' | 'completed';
+}
+
 export const useCreditCardStore = create<CreditCardState>()(
     persist(
         (set, get) => ({
             cards: [],
+            activePlan: null,
 
             addCard: (card) => {
                 const newCard: CreditCard = {
@@ -61,6 +84,39 @@ export const useCreditCardStore = create<CreditCardState>()(
                     cards: state.cards.filter(c => c.id !== id)
                 }));
             },
+
+            setActivePlan: (items) => {
+                set({
+                    activePlan: {
+                        id: Math.random().toString(36).substring(7),
+                        items,
+                        createdAt: Date.now(),
+                        status: 'active'
+                    }
+                });
+            },
+
+            togglePaymentStatus: (cardId) => {
+                set((state) => {
+                    if (!state.activePlan) return state;
+
+                    const newItems = state.activePlan.items.map(item =>
+                        item.cardId === cardId ? { ...item, isPaid: !item.isPaid } : item
+                    );
+
+                    const allPaid = newItems.every(item => item.isPaid);
+
+                    return {
+                        activePlan: {
+                            ...state.activePlan,
+                            items: newItems,
+                            status: allPaid ? 'completed' : 'active'
+                        }
+                    };
+                });
+            },
+
+            clearPlan: () => set({ activePlan: null }),
 
             getTotalDebt: () => {
                 return get().cards.reduce((sum, card) => sum + card.currentDebt, 0);
@@ -84,7 +140,10 @@ export const useCreditCardStore = create<CreditCardState>()(
         {
             name: 'credit-card-storage',
             storage: createJSONStorage(() => AsyncStorage),
-            partialize: (state) => ({ cards: state.cards }),
+            partialize: (state) => ({
+                cards: state.cards,
+                activePlan: state.activePlan
+            }),
         }
     )
 );

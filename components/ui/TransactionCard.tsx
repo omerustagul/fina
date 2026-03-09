@@ -101,7 +101,11 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
                     <GHTouchableOpacity onPress={handlePress} activeOpacity={0.8}>
                         <View style={[styles.container, { backgroundColor: 'transparent' }]}>
                             <View style={[styles.iconContainer, { backgroundColor: `${category.color}15` }]}>
-                                <Text style={styles.icon}>{category.icon}</Text>
+                                {category.icon.length <= 2 ? (
+                                    <Text style={styles.icon}>{category.icon}</Text>
+                                ) : (
+                                    <Ionicons name={category.icon as any} size={18} color={category.color} />
+                                )}
                             </View>
 
                             <View style={styles.infoContainer}>

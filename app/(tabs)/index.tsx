@@ -21,11 +21,12 @@ export default function DashboardScreen() {
   const balance = income - expense;
 
   const quickActions = [
-    { id: 'income', title: 'Gelir', icon: 'add-circle', color: colors.accent.teal, route: '/modals/add-transaction' },
-    { id: 'expense', title: 'Gider', icon: 'remove-circle', color: colors.accent.red, route: '/modals/add-transaction' },
-    { id: 'goal', title: 'Hedefler', icon: 'trophy', color: colors.accent.amber, route: '/goals' },
-    { id: 'card', title: 'Findeks Yön.', icon: 'card', color: colors.primary.brand, route: '/cards' },
-    { id: 'ai', title: 'AI Analiz', icon: 'sparkles', color: colors.accent.purple, route: '/modals/ai-chat' },
+    { id: 'income', title: 'Gelir Ekle', icon: 'add-circle-outline', color: colors.accent.teal, route: '/modals/add-transaction' },
+    { id: 'expense', title: 'Gider Ekle', icon: 'remove-circle-outline', color: colors.accent.red, route: '/modals/add-transaction' },
+    { id: 'reminders', title: 'Hatırlatmalar', icon: 'notifications-outline', color: colors.accent.amber, route: '/reminders' },
+    { id: 'goal', title: 'Hedeflerim', icon: 'flag-outline', color: colors.accent.purple, route: '/goals' },
+    { id: 'card', title: 'Findeks Yön.', icon: 'card-outline', color: colors.primary.brand, route: '/cards' },
+    { id: 'ai', title: 'AI Analiz', icon: 'sparkles-outline', color: colors.accent.purple, route: '/modals/ai-chat' },
   ];
 
   const handleDelete = (id: string, title: string) => {
@@ -92,24 +93,22 @@ export default function DashboardScreen() {
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.glass.text.primary }]}>Hızlı Aksiyonlar</Text>
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.actionsScroll}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-          decelerationRate="fast"
-        >
+        <View style={styles.actionsGrid}>
           {quickActions.map((action) => (
-            <Pressable key={action.id} onPress={() => router.push({ pathname: action.route as any, params: { type: action.id } })}>
-              <GlassCard style={styles.actionCard} contentStyle={{ padding: 8 }} variant="subtle">
-                <View style={[styles.actionIconBg, { backgroundColor: isDark ? `${action.color}15` : `${action.color}25` }]}>
-                  <Ionicons name={action.icon as any} size={28} color={action.color} />
+            <Pressable
+              key={action.id}
+              onPress={() => router.push({ pathname: action.route as any, params: { type: action.id } })}
+              style={styles.actionItem}
+            >
+              <GlassCard style={styles.actionCard} contentStyle={styles.actionContent} variant="subtle">
+                <View style={[styles.actionIconBg, { backgroundColor: isDark ? `${action.color}15` : `${action.color}10` }]}>
+                  <Ionicons name={action.icon as any} size={20} color={action.color} />
                 </View>
-                <Text style={[styles.actionText, { color: colors.glass.text.primary }]}>{action.title}</Text>
+                <Text style={[styles.actionText, { color: colors.glass.text.primary }]} numberOfLines={1}>{action.title}</Text>
               </GlassCard>
             </Pressable>
           ))}
-        </ScrollView>
+        </View>
 
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.glass.text.primary }]}>Son İşlemler</Text>
@@ -196,28 +195,36 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: 2,
   },
-  actionsScroll: {
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
     marginBottom: 8,
-    marginHorizontal: -20,
+  },
+  actionItem: {
+    width: '48.5%', // Slightly less than 50% for gap
   },
   actionCard: {
-    width: 100,
-    height: 110,
-    justifyContent: 'center',
+    height: 56,
+  },
+  actionContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 12,
+    paddingHorizontal: 12,
+    height: '100%',
+    gap: 10,
   },
   actionIconBg: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
   },
   actionText: {
-    fontFamily: FONTS.family.medium,
+    fontFamily: FONTS.family.bold,
     fontSize: 13,
+    flex: 1,
   },
   emptyState: {
     alignItems: 'center',

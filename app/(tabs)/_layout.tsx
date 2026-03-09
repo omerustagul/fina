@@ -4,9 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator, MaterialTopTabNavigationEventMap, MaterialTopTabNavigationOptions } from '@react-navigation/material-top-tabs';
 import { ParamListBase, TabNavigationState } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, withLayoutContext } from 'expo-router';
 import * as React from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { Navigator } = createMaterialTopTabNavigator();
@@ -33,26 +35,28 @@ export default function TabLayout() {
             shadowColor: isDark ? '#000' : colors.primary.brand,
             shadowOpacity: isDark ? 0.6 : 0.2
           }]}>
-            {/* Glass Effect Layer */}
-            {Platform.OS === 'ios' ? (
-              <BlurView
-                tint={isDark ? "dark" : "light"}
-                intensity={30}
-                style={StyleSheet.absoluteFill}
-              />
-            ) : (
-              <View style={[StyleSheet.absoluteFill, {
-                backgroundColor: isDark ? 'rgba(12, 0, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)'
-              }]} />
-            )}
+            {/* Background & Effects Layer */}
+            <View style={styles.tabBarBackground}>
+              {Platform.OS === 'ios' ? (
+                <BlurView
+                  tint={isDark ? "dark" : "light"}
+                  intensity={30}
+                  style={StyleSheet.absoluteFill}
+                />
+              ) : (
+                <View style={[StyleSheet.absoluteFill, {
+                  backgroundColor: isDark ? 'rgba(12, 0, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)'
+                }]} />
+              )}
 
-            {/* Subtle Inner Glow/Border */}
-            <View style={[StyleSheet.absoluteFill, {
-              borderRadius: 28,
-              borderWidth: 1,
-              borderColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(108, 60, 225, 0.12)',
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(108, 60, 225, 0.03)'
-            }]} pointerEvents="none" />
+              {/* Subtle Inner Glow/Border */}
+              <View style={[StyleSheet.absoluteFill, {
+                borderRadius: 28,
+                borderWidth: 1,
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(108, 60, 225, 0.12)',
+                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(108, 60, 225, 0.03)'
+              }]} pointerEvents="none" />
+            </View>
 
             <View style={styles.tabBarInner}>
               {props.state.routes.map((route, index) => {
@@ -79,15 +83,6 @@ export default function TabLayout() {
 
                 return (
                   <React.Fragment key={route.key}>
-                    {index === 2 && (
-                      <Pressable
-                        style={styles.centerBtn}
-                        onPress={() => router.push('/modals/quick-menu' as any)}
-                        android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: true }}
-                      >
-                        <Ionicons name="apps" size={24} color="#FFF" />
-                      </Pressable>
-                    )}
                     <Pressable
                       onPress={onPress}
                       style={styles.tabItem}
@@ -104,6 +99,57 @@ export default function TabLayout() {
                         {options.title}
                       </Text>
                     </Pressable>
+
+                    {index === 1 && (() => {
+                      const pulse = useSharedValue(1);
+                      React.useEffect(() => {
+                        pulse.value = withRepeat(
+                          withTiming(1.2, { duration: 2000, easing: Easing.bezier(0.4, 0, 0.6, 1) }),
+                          -1,
+                          true
+                        );
+                      }, []);
+
+                      const animatedGlow = useAnimatedStyle(() => ({
+                        transform: [{ scale: pulse.value }],
+                        opacity: 0.6 - (pulse.value - 1) * 2,
+                      }));
+
+                      return (
+                        <View style={styles.centerBtnWrapper}>
+                          <Pressable
+                            style={styles.centerBtn}
+                            onPress={() => router.push('/modals/quick-menu' as any)}
+                          >
+                            {/* Animated Pulse Outer Glow */}
+                            <Animated.View style={[styles.outerGlow, { borderColor: colors.accent.teal }, animatedGlow]} />
+
+                            {/* Static Glow Base */}
+                            <View style={[styles.outerGlow, { borderColor: `${colors.accent.teal}30`, width: 68, height: 68, borderRadius: 34 }]} />
+
+                            {/* Main Button Body - Glass + Gradient */}
+                            <LinearGradient
+                              colors={[colors.primary.brand, colors.accent.teal]}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              style={styles.centerBtnGradient}
+                            >
+                              <BlurView intensity={30} tint="light" style={StyleSheet.absoluteFill} />
+
+                              {/* Holographic Light effect */}
+                              <LinearGradient
+                                colors={['rgba(255,255,255,0.5)', 'transparent', 'rgba(255,255,255,0.2)']}
+                                start={{ x: 0.2, y: 0.2 }}
+                                end={{ x: 0.8, y: 0.8 }}
+                                style={StyleSheet.absoluteFill}
+                              />
+
+                              <Ionicons name="grid" size={24} color="#FFF" style={styles.centerIconShadow} />
+                            </LinearGradient>
+                          </Pressable>
+                        </View>
+                      );
+                    })()}
                   </React.Fragment>
                 );
               })}
@@ -130,7 +176,6 @@ const styles = StyleSheet.create({
     right: 20,
     height: 72,
     borderRadius: 28,
-    overflow: 'hidden',
     elevation: 25,
     shadowOffset: { width: 0, height: 12 },
     shadowRadius: 16,
@@ -142,6 +187,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: 4,
+    backgroundColor: 'transparent',
+  },
+  tabBarBackground: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 28,
+    overflow: 'hidden',
   },
   tabItem: {
     flex: 1,
@@ -150,19 +201,46 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingTop: 4,
   },
-  centerBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#00D09E',
+  centerBtnWrapper: {
+    width: 60,
+    height: '100%', // Match tabBar height
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 8,
-    shadowColor: '#00D09E',
+  },
+  centerBtn: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  outerGlow: {
+    position: 'absolute',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 1,
+    opacity: 0.5,
+  },
+  centerBtnGradient: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    shadowColor: '#6C3CE1',
     shadowOpacity: 0.4,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 6,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  centerIconShadow: {
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 4,
   },
   activeIconBg: {
     padding: 8,

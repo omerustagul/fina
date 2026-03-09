@@ -37,13 +37,14 @@ export default function AnalyticsScreen() {
 
                     <View style={styles.overviewContent}>
                         <View style={styles.overviewChart}>
-                            <BalanceDonut income={income} expense={expense} size={110} />
-                            <View style={styles.chartCenter}>
-                                <Text style={[styles.chartCenterText, { color: colors.glass.text.primary }]}>Net</Text>
-                                <Text style={[styles.chartCenterValue, { color: income - expense >= 0 ? colors.accent.teal : colors.accent.red }]} numberOfLines={1}>
-                                    {formatCurrency(income - expense)}
-                                </Text>
-                            </View>
+                            <BalanceDonut income={income} expense={expense} size={110}>
+                                <View style={styles.chartCenter}>
+                                    <Text style={[styles.chartCenterText, { color: colors.glass.text.primary }]}>Net</Text>
+                                    <Text style={[styles.chartCenterValue, { color: income - expense >= 0 ? colors.accent.teal : colors.accent.red }]} numberOfLines={1}>
+                                        {formatCurrency(income - expense)}
+                                    </Text>
+                                </View>
+                            </BalanceDonut>
                         </View>
 
                         <View style={styles.overviewStats}>
@@ -80,7 +81,13 @@ export default function AnalyticsScreen() {
                     <GlassCard key={cat.id} style={styles.categoryRow} variant="subtle">
                         <View style={styles.categoryInfo}>
                             <View style={styles.categoryNameContainer}>
-                                <Text style={styles.categoryEmoji}>{cat.icon}</Text>
+                                <View style={[styles.categoryIconBg, { backgroundColor: `${cat.color}15` }]}>
+                                    {cat.icon.length <= 2 ? (
+                                        <Text style={styles.categoryEmoji}>{cat.icon}</Text>
+                                    ) : (
+                                        <Ionicons name={cat.icon as any} size={16} color={cat.color} />
+                                    )}
+                                </View>
                                 <Text style={[styles.categoryName, { color: colors.glass.text.primary }]}>{cat.name}</Text>
                             </View>
                             <Text style={[styles.categoryAmount, { color: colors.glass.text.secondary }]}>{formatCurrency(Math.random() * 5000)}</Text>
@@ -163,7 +170,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 80, // Prevent overlapping
+        width: 80,
     },
     chartCenterText: {
         fontFamily: FONTS.family.medium,
@@ -229,10 +236,17 @@ const styles = StyleSheet.create({
     categoryNameContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 12,
+    },
+    categoryIconBg: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     categoryEmoji: {
-        fontSize: 16,
+        fontSize: 14,
     },
     categoryName: {
         fontFamily: FONTS.family.bold,

@@ -67,3 +67,14 @@ export interface AIInsight {
     dismissed: boolean;
     createdAt: number;
 }
+
+export interface Reminder {
+    id: string;
+    title: string;
+    amount?: number;
+    type: 'debt_given' | 'debt_taken' | 'bill' | 'other';
+    dueDate: number;
+    isCompleted: boolean;
+    notify: boolean;
+    createdAt: number;
+}

@@ -24,7 +24,8 @@ export default function PaymentPlanModal() {
     const [budgetInput, setBudgetInput] = useState(defaultBudget > 0 ? defaultBudget.toString() : '');
 
     const [isCalculated, setIsCalculated] = useState(false);
-    const [plan, setPlan] = useState<{ cardId: string; amount: number; reason: string }[]>([]);
+    const [plan, setPlan] = useState<{ cardId: string; amount: number; reason: string; isPaid: boolean }[]>([]);
+    const setActivePlan = useCreditCardStore((state) => state.setActivePlan);
 
     const totalMinPayment = typeof getTotalMinimumPayment === 'function' ? getTotalMinimumPayment() : cards.reduce((sum, c) => sum + (c.minimumPayment || 0), 0);
 
@@ -104,11 +105,17 @@ export default function PaymentPlanModal() {
         const finalPlan = cards.filter(c => tempPlan[c.id] > 0).map(c => ({
             cardId: c.id,
             amount: tempPlan[c.id],
-            reason: tempReasons[c.id]
+            reason: tempReasons[c.id],
+            isPaid: false
         }));
 
         setPlan(finalPlan);
         setIsCalculated(true);
+    };
+
+    const handleConfirm = () => {
+        setActivePlan(plan);
+        router.back();
     };
 
     return (
@@ -230,7 +237,7 @@ export default function PaymentPlanModal() {
                                     <GlassButton
                                         title="Planı Onayla"
                                         variant="primary"
-                                        onPress={() => router.back()}
+                                        onPress={handleConfirm}
                                         style={{ flex: 1 }}
                                     />
                                 </>

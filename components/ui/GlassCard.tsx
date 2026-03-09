@@ -1,13 +1,13 @@
 import { useTheme } from '@/stores/themeStore';
 import { BlurView } from 'expo-blur';
 import * as React from 'react';
-import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface GlassCardProps {
     children: React.ReactNode;
-    style?: ViewStyle;
-    contentStyle?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
+    contentStyle?: StyleProp<ViewStyle>;
     intensity?: number;
     variant?: 'default' | 'elevated' | 'subtle';
     animated?: boolean;

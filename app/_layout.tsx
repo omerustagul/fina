@@ -84,6 +84,7 @@ function RootLayoutNav() {
         <Stack.Screen name="modals/add-scan" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="modals/quick-menu" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="modals/add-category" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
+        <Stack.Screen name="modals/add-reminder" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="modals/add-card" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="modals/card-detail" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="modals/payment-plan" options={{ presentation: 'transparentModal', headerShown: false, animation: 'fade' }} />
@@ -91,6 +92,7 @@ function RootLayoutNav() {
         <Stack.Screen name="modals/edit-profile" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="modals/help-center" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="goals" options={{ presentation: 'card', headerShown: false }} />
+        <Stack.Screen name="reminders" options={{ presentation: 'card', headerShown: false }} />
         <Stack.Screen name="cards" options={{ presentation: 'card', headerShown: false }} />
         <Stack.Screen name="settings/index" options={{ presentation: 'card', title: 'Ayarlar', headerShown: false }} />
       </Stack>
